@@ -10,13 +10,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Client  {
     public int ID;
 
-    private InetAddress serverAddress;
-    private int serverPort;
+    protected InetAddress serverAddress;
+    protected int serverPort;
 
-    private boolean connected = false;
-    private DatagramSocket socket;
+    protected boolean connected = false;
+    protected DatagramSocket socket;
 
-    private BlockingQueue<byte[]> messageQueue = new LinkedBlockingQueue<>();
+    protected BlockingQueue<byte[]> receivedQueue = new LinkedBlockingQueue<>();
 
     public Client(String serverAddress, int serverPort, int id) throws Exception {
         this.serverAddress = InetAddress.getByName(serverAddress);
@@ -43,7 +43,7 @@ public class Client  {
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
         System.out.println("Received: " + new String(packet.getData(), 0, packet.getLength()));
-        messageQueue.put(packet.getData());
+        receivedQueue.put(packet.getData());
     }
 
     // Method to connect to the server

@@ -2,6 +2,8 @@ package Minesweeper;
 
 import java.util.Random;
 
+import Utils.MagicNumbers;
+
 // A simple representation of a Minesweeper board
 public class ServerBoard extends Board {
     private Tile[][] cells;
@@ -42,10 +44,10 @@ public class ServerBoard extends Board {
     }
 
     public byte[] toByteArray() {
-        byte[] data = new byte[(width * height) + 5];
-        data[0] = (byte) width;
-        data[1] = (byte) height;
-        data[2] = (byte) bombCount;
+        byte[] data = new byte[(width * height) + MagicNumbers.BOARD_HEADER_SIZE];
+        data[MagicNumbers.WIDTH_INDEX] = (byte) width;
+        data[MagicNumbers.HEIGHT_INDEX] = (byte) height;
+        data[MagicNumbers.BOMB_COUNT_INDEX] = (byte) bombCount;
         // data[3] and data[4] can be reserved for future use
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {

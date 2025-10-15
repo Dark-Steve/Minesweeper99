@@ -4,12 +4,14 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import Client.Client;
+import Minesweeper.Game;
 
 // A simple UDP server for Minesweeper99
 public class Server {
@@ -18,8 +20,8 @@ public class Server {
 
     private ExecutorService processingPool = Executors.newFixedThreadPool(4);
     private BlockingQueue<DatagramPacket> messageQueue = new LinkedBlockingQueue<>();
-    private CopyOnWriteArrayList<Client> clients = new CopyOnWriteArrayList<>();
-    
+    private CopyOnWriteArrayList<ServerClient> clients = new CopyOnWriteArrayList<>();
+
     public Server() throws SocketException {
         socket = new DatagramSocket(12345);
 
@@ -31,6 +33,9 @@ public class Server {
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                     socket.receive(packet);
                     messageQueue.put(packet);
+                    // If new connection, add to clients list
+                    clients.add(new ServerClient(packet.getAddress(), packet.getPort(), packet.getPort()));
+                    System.out.println("New client connected: " + packet.getAddress() + ":" + packet.getPort());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

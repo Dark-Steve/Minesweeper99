@@ -14,3 +14,9 @@ if revealed and bomb 0x10 and 0x20 (bit 4 and 5 0011 0000)
 if revealed and not bomb 0x10 and numBombs (bit 4 and 0-3 0001 0???)
 if not revealed and flag 0x40 (bit 6 0100 0000)
 else 0 (0000 0000)
+
+ex tile
+0x17 (revealed number 7)
+0x30 (revealed bomb)
+0x0 (hidden no flag)
+0x40 (hidden with flag)

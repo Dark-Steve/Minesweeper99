@@ -1,6 +1,6 @@
 package Minesweeper;
 // A class representing a single tile in the Minesweeper game
-public class Tile {
+public class Tile extends Cell {
     private boolean isRevealed;
     private boolean isFlagged;
     private boolean isMine;

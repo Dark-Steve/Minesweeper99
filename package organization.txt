@@ -1,0 +1,16 @@
+packages follow this organization:
+
+data[0] width
+data[1] height
+data[2] bombCount
+
+tile data offset by 5 bytes
+
+byte[width * height]
+top left -> bottom right
+
+if revealed 0x10 (bit 4 0001 0000)
+if revealed and bomb 0x10 and 0x20 (bit 4 and 5 0011 0000)
+if revealed and not bomb 0x10 and numBombs (bit 4 and 0-3 0001 0???)
+if not revealed and flag 0x40 (bit 6 0100 0000)
+else 0 (0000 0000)

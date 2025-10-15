@@ -11,6 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import Client.Client;
 
+// A simple UDP server for Minesweeper99
 public class Server {
 
     private DatagramSocket socket;
@@ -22,6 +23,7 @@ public class Server {
     public Server() throws SocketException {
         socket = new DatagramSocket(12345);
 
+        // Initialize receiver thread
         Thread receiver = new Thread(() -> {
             while (true) {
                 try {
@@ -36,6 +38,7 @@ public class Server {
         });
         receiver.start();
 
+        // Initialize processing threads
         for (int i = 0; i < 4; i++) {
             processingPool.submit(() -> {
                 while (true) {

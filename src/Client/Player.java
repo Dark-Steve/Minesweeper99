@@ -11,12 +11,13 @@ import Utils.MagicNumbers;
 public class Player extends Client {
     private Thread receiver;
     private Thread sender;
+    private Scanner scanner;
 
     private PlayerBoard board;
 
     public Player(String serverAddress, int serverPort, int id) throws Exception {
         super(serverAddress, serverPort, id);
-
+        scanner = new Scanner(System.in);
     }
 
     public void startReceiver() {
@@ -34,7 +35,6 @@ public class Player extends Client {
     }
 
     public void getInput() throws Exception {
-        Scanner scanner = new Scanner(System.in);
         if (System.in.available() > 0) {
             String input = scanner.nextLine();
             try {
@@ -43,7 +43,6 @@ public class Player extends Client {
                 e.printStackTrace();
             }
         }
-        scanner.close();
     }
 
     public void run() throws Exception {
@@ -57,6 +56,7 @@ public class Player extends Client {
                 try {
                     byte[] message = receivedQueue.take();
                     updateBoard(message);
+                    displayBoard();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -106,7 +106,7 @@ public class Player extends Client {
     @Override
     public void connect() throws Exception {
         super.connect();
-        receiver.start();
+        startReceiver();
         sender.start();
     }
 

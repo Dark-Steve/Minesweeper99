@@ -19,6 +19,7 @@ public class MagicNumbers {
     public static final byte CLIENT_MESSAGE_HEADER_SIZE = 1; // Size of the client message header in bytes
     public static final byte CLIENT_TYPE_INDEX = 0; // Index of the message type in client messages
     // Message types
+    public static final byte MSG_CONNECT = 0x00; // Message to connect to the server
     public static final byte MSG_REVEAL = 0x01; // Message to reveal a tile
     public static final byte MSG_FLAG = 0x02; // Message to flag a tile
     public static final byte HEART_BEAT = 0x7F; // Heartbeat message
@@ -26,10 +27,11 @@ public class MagicNumbers {
     // Server message constants
     public static final byte SERVER_MESSAGE_TYPE_INDEX = 0; // Index of value indicating message type from the server
     public static final byte FULL_GAME_STATE_INDICATOR = 0x7E; // Value indicating that the data is full game state
-    public static final byte FULL_GAME_STATE_HEADER_SIZE = 1; // Size of the full game state header in bytes
+    public static final byte FULL_GAME_STATE_HEADER_SIZE = 2; // Size of the full game state header in bytes
+    public static final byte FULL_GAME_BOARD_COUNT_INDEX = 1; // Index of the number of boards in full game state message
 
     // Board representation constants
-    public static final byte BOARD_HEADER_SIZE = 12; // Size of the board header in bytes
+    public static final byte BOARD_HEADER_SIZE = 13; // Size of the board header in bytes
     public static final byte BOARD_INDICATOR = 0x3F; // Value indicating that the data is board data
     public static final byte BOARD_INDICATOR_INDEX = 0; // Index of value indicating if data is board data
     public static final byte WIDTH_INDEX = 1; // Index of width in board data
@@ -42,6 +44,6 @@ public class MagicNumbers {
     // Network communication constants
     public static final int HEARTBEAT_INTERVAL_MS = 5000; // Interval for sending heartbeat messages
     public static final int MAX_MESSAGE_SIZE = 1024; // Maximum size of a network message in bytes
-    public static final int DEFAULT_SERVER_PORT = 9876; // Default server port
-    public static final String DEFAULT_SERVER_ADDRESS = "localhost"; // Default server address
+    public static final int DEFAULT_SERVER_PORT = 12345; // Default server port
+    public static final String DEFAULT_SERVER_ADDRESS = "10.0.0.16"; // Default server address
 }

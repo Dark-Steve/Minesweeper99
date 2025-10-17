@@ -6,12 +6,13 @@ public class PlayerBoard extends Board {
     protected byte[][] cells;
 
     public PlayerBoard(byte[] data) {
-        super(data[0], data[1], data[2]);
+        super(data[MagicNumbers.WIDTH_INDEX], data[MagicNumbers.HEIGHT_INDEX], data[MagicNumbers.BOMB_COUNT_INDEX]);
         cells = new byte[width][height];
-        for (int i = 0; i < data.length - MagicNumbers.BOARD_HEADER_SIZE; i++) {
-            int x = i / height;
-            int y = i % height;
-            cells[x][y] = data[i + MagicNumbers.BOARD_HEADER_SIZE];
+        for (int i = MagicNumbers.BOARD_HEADER_SIZE; i < width * height; i++) {
+            int index = i - MagicNumbers.BOARD_HEADER_SIZE;
+            int x = index / height;
+            int y = index % height;
+            cells[x][y] = data[i];
         }
     }
 

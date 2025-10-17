@@ -33,7 +33,7 @@ public class Server {
                     byte[] buffer = new byte[1024];
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                     socket.receive(packet);
-                    messageQueue.put(packet);
+                    
                     // Obtain client ID from packet (address.hashCode() * port as a simple example)
                     long clientId = packet.getAddress().hashCode() * packet.getPort();
                     // If connection is from a new IP, add to clients list
@@ -45,6 +45,9 @@ public class Server {
                         System.out.println("New client connected: " + packet.getAddress() + ":" + packet.getPort());
                     }
 
+                    // Add packet to message queue
+                    // ALWAYS LAST STEP
+                    messageQueue.put(packet);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

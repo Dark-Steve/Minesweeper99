@@ -52,7 +52,6 @@ public class ServerBoard extends Board {
         data[MagicNumbers.BOMB_COUNT_INDEX] = (byte) bombCount;
         byte[] clientIdBytes = Util.longToBytes(clientId);
         System.arraycopy(clientIdBytes, 0, data, MagicNumbers.CLIENT_ID_INDEX, 8);
-        // data[3] and data[4] can be reserved for future use
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 int index = (x * height + y) + MagicNumbers.BOARD_HEADER_SIZE;

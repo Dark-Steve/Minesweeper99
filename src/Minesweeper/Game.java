@@ -7,18 +7,17 @@ public class Game {
         board = new ServerBoard(width, height, bombCount);
     }
 
-    public void play(int x, int y, boolean flag) {
+    public void reveal(int x, int y) {
         // Game logic to handle a move at (x, y)
-        if (x >= 0 && x < board.getWidth() && y >= 0 && y < board.getHeight()) {
-            if (flag) {
-                board.getTile(x, y).flag();
-            } else {
-                board.getTile(x, y).reveal();
-            }
-        }
+        board.getTile(x, y).reveal();
     }
 
-    public byte[] toByteArray() {
-        return board.toByteArray();
+    public void flag(int x, int y) {   
+        // Game logic to handle flagging a tile at (x, y)
+        board.getTile(x, y).toggleFlag();
+    }
+
+    public byte[] toByteArray(long clientId) {
+        return board.toByteArray(clientId);
     }
 }

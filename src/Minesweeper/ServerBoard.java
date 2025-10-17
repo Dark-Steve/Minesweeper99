@@ -3,6 +3,7 @@ package Minesweeper;
 import java.util.Random;
 
 import Utils.MagicNumbers;
+import Utils.Util;
 
 // A simple representation of a Minesweeper board
 public class ServerBoard extends Board {
@@ -43,26 +44,29 @@ public class ServerBoard extends Board {
         }
     }
 
-    public byte[] toByteArray() {
+    public byte[] toByteArray(long clientId) {
         byte[] data = new byte[(width * height) + MagicNumbers.BOARD_HEADER_SIZE];
+        data[MagicNumbers.BOARD_INDICATOR_INDEX] = MagicNumbers.BOARD_INDICATOR;
         data[MagicNumbers.WIDTH_INDEX] = (byte) width;
         data[MagicNumbers.HEIGHT_INDEX] = (byte) height;
         data[MagicNumbers.BOMB_COUNT_INDEX] = (byte) bombCount;
+        byte[] clientIdBytes = Util.longToBytes(clientId);
+        System.arraycopy(clientIdBytes, 0, data, MagicNumbers.CLIENT_ID_INDEX, 8);
         // data[3] and data[4] can be reserved for future use
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                int index = x * height + y;
+                int index = (x * height + y) + MagicNumbers.BOARD_HEADER_SIZE;
                 Tile tile = cells[x][y];
                 byte value = 0;
                 if (tile.isRevealed()) {
-                    value |= 0x10; // Revealed flag
+                    value |= MagicNumbers.TILE_REVEALED; // Revealed flag
                     if (tile.isMine()) {
-                        value |= 0x20; // Mine flag
+                        value |= MagicNumbers.TILE_BOMB; // Mine flag
                     } else {
                         value |= (byte) tile.getAdjacentMines(); // Adjacent mine count
                     }
                 } else if (tile.isFlagged()) {
-                    value |= 0x40; // Flagged flag
+                    value |= MagicNumbers.TILE_FLAG; // Flagged flag
                 }
                 data[index] = value;
             }

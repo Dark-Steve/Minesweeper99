@@ -1,17 +1,16 @@
 package Server;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import Client.Client;
 import Minesweeper.Game;
 import Utils.MagicNumbers;
 
@@ -22,8 +21,7 @@ public class Server {
 
     private ExecutorService processingPool = Executors.newFixedThreadPool(4);
     private BlockingQueue<DatagramPacket> messageQueue = new LinkedBlockingQueue<>();
-    private CopyOnWriteArrayList<ServerClient> clients = new CopyOnWriteArrayList<>();
-    private ConcurrentHashMap<InetAddress, Integer> clientMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Long, ServerClient> clientMap = new ConcurrentHashMap<>();
 
     public Server() throws SocketException {
         socket = new DatagramSocket(12345);
@@ -36,13 +34,17 @@ public class Server {
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                     socket.receive(packet);
                     messageQueue.put(packet);
+                    // Obtain client ID from packet (address.hashCode() * port as a simple example)
+                    long clientId = packet.getAddress().hashCode() * packet.getPort();
                     // If connection is from a new IP, add to clients list
-                    boolean knownClient = clientMap.containsKey(packet.getAddress());
+                    boolean knownClient = clientMap.containsKey(clientId);
+
                     if (!knownClient) {
-                        clients.add(new ServerClient(packet.getAddress(), packet.getPort(), clients.size() + 1));
-                        clientMap.put(packet.getAddress(), packet.getPort());
+                        ServerClient newClient = new ServerClient(packet.getAddress(), packet.getPort(), clientId);
+                        clientMap.put(clientId, newClient);
                         System.out.println("New client connected: " + packet.getAddress() + ":" + packet.getPort());
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -71,38 +73,79 @@ public class Server {
         socket.send(packet);
     }
 
+    private byte[] serializeGameState() {
+        // First pass: calculate total size
+        int totalSize = 0;
+        List<byte[]> gameStates = new ArrayList<>(clientMap.size());
+
+        for (ServerClient client : clientMap.values()) {
+            if (client.game != null) {
+                byte[] state = client.game.toByteArray(client.id);
+                gameStates.add(state);
+                totalSize += state.length;
+            }
+        }
+
+        // Second pass: copy to result array
+        byte[] serialized = new byte[totalSize];
+        
+        // Set header values
+        serialized[MagicNumbers.SERVER_MESSAGE_TYPE_INDEX] = MagicNumbers.FULL_GAME_STATE_INDICATOR;
+
+        int currentIndex = MagicNumbers.FULL_GAME_STATE_HEADER_SIZE; // Leave space for header
+        for (byte[] state : gameStates) {
+            System.arraycopy(state, 0, serialized, currentIndex, state.length);
+            currentIndex += state.length;
+        }
+
+        return serialized;
+    }
+
     public void processPacket(DatagramPacket packet) throws Exception {
-        Integer clientId = clientMap.get(packet.getAddress());
-        ServerClient client = clients.get(clientId);
+        long clientId = packet.getAddress().hashCode() * packet.getPort();
+        ServerClient client = clientMap.get(clientId);
 
         // Check if the client has a valid game
         if (client.game == null) {
             // If not, create a new game for the client
-            client.game = new Game(MagicNumbers.DEFAULT_WIDTH, MagicNumbers.DEFAULT_HEIGHT, MagicNumbers.DEFAULT_BOMB_COUNT);
-            sendMessage(client.game.toByteArray(), client);
+            client.game = new Game(MagicNumbers.DEFAULT_WIDTH, MagicNumbers.DEFAULT_HEIGHT,
+                    MagicNumbers.DEFAULT_BOMB_COUNT);
+            byte[] response = client.game.toByteArray(clientId);
+            sendMessage(response, client);
             return;
         }
 
         // If the client has a game, process the move
         byte[] data = packet.getData();
-        int x = data[0];
-        int y = data[1];
-        boolean flag = data[2] == 1;
-        client.game.play(x, y, flag);
-
-        // Send updated board state back to the client
-        sendMessage(client.game.toByteArray(), client);
-
-        // Process the packet (e.g., parse message, update game state, etc.)
-        String message = new String(packet.getData(), 0, packet.getLength());
-        System.out.println("Received: " + message + " from " + packet.getAddress() + ":" + packet.getPort());
-
-        // Example: Echo the message back to the sender
-        try {
-            DatagramPacket response = new DatagramPacket(packet.getData(), packet.getLength(), packet.getAddress(), packet.getPort());
-            socket.send(response);
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Get message type from header
+        byte messageType = data[MagicNumbers.CLIENT_TYPE_INDEX];
+        if (messageType == MagicNumbers.HEART_BEAT) {
+            // TODO: implement client timeout timer
+        } else if (messageType == MagicNumbers.MSG_REVEAL) {
+            // Process reveal message
+            if (data.length < MagicNumbers.CLIENT_MESSAGE_HEADER_SIZE + 2) {
+                System.out.println("Invalid reveal message length");
+                return;
+            }
+            int x = data[MagicNumbers.CLIENT_MESSAGE_HEADER_SIZE];
+            int y = data[MagicNumbers.CLIENT_MESSAGE_HEADER_SIZE + 1];
+            client.game.reveal(x, y);
+        } else if (messageType == MagicNumbers.MSG_FLAG) {
+            // Process flag message
+            if (data.length < MagicNumbers.CLIENT_MESSAGE_HEADER_SIZE + 2) {
+                System.out.println("Invalid flag message length");
+                return;
+            }
+            int x = data[MagicNumbers.CLIENT_MESSAGE_HEADER_SIZE];
+            int y = data[MagicNumbers.CLIENT_MESSAGE_HEADER_SIZE + 1];
+            client.game.flag(x, y);
+        } else {
+            System.out.println("Unknown message type: " + messageType);
+            return;
         }
+
+        byte[] gameState = serializeGameState();
+        // Send updated board state back to the client
+        sendMessage(gameState, client);
     }
 }

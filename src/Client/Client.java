@@ -8,7 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 // Base class for client connecting to the server
 public class Client  {
-    public int ID;
+    public long clientId;
 
     protected InetAddress serverAddress;
     protected int serverPort;
@@ -21,7 +21,7 @@ public class Client  {
     public Client(String serverAddress, int serverPort, int id) throws Exception {
         this.serverAddress = InetAddress.getByName(serverAddress);
         this.serverPort = serverPort;
-        this.ID = id;
+        this.clientId = id;
     }
 
     // Method to send messages to the server

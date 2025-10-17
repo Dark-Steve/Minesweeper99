@@ -27,8 +27,8 @@ public class PlayerBoard extends Board {
 
     public void update(byte[] data) {
         // Check if data is valid
-        if (data.length != width * height + MagicNumbers.BOARD_HEADER_SIZE) {
-            throw new IllegalArgumentException("Invalid data length");
+        if (data[MagicNumbers.BOARD_INDICATOR_INDEX] != MagicNumbers.BOARD_INDICATOR) {
+            throw new IllegalArgumentException("Invalid board data");
         }
         for (int i = MagicNumbers.BOARD_HEADER_SIZE; i < data.length; i++) {
             int x = i / height;

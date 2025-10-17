@@ -1,4 +1,7 @@
 package Minesweeper;
+
+import Utils.MagicNumbers;
+
 // A class representing a single tile in the Minesweeper game
 public class Tile extends Cell {
     private boolean isRevealed;
@@ -18,12 +21,12 @@ public class Tile extends Cell {
         if (isRevealed) {
             value |= 0x10; // Revealed flag
             if (isMine) {
-                value |= 0x20; // Mine flag
+                value |= MagicNumbers.TILE_BOMB; // Mine flag
             } else {
                 value |= (byte) adjacentMines; // Adjacent mine count
             }
         } else if (isFlagged) {
-            value |= 0x40; // Flagged flag
+            value |= MagicNumbers.TILE_FLAG; // Flagged flag
         }
         return value;
     }
@@ -62,5 +65,13 @@ public class Tile extends Cell {
 
     public void unflag() {
         isFlagged = false;
+    }
+
+    public void toggleFlag() {
+        if (isFlagged) {
+            unflag();
+        } else {
+            flag();
+        }
     }
 }

@@ -7,10 +7,10 @@ import Minesweeper.Game;
 public class ServerClient {
     public InetAddress address;
     public int port;
-    public int id;
+    public long id;
     public Game game;
 
-    public ServerClient(InetAddress address, int port, int id) {
+    public ServerClient(InetAddress address, int port, long id) {
         this.address = address;
         this.port = port;
         this.id = id;

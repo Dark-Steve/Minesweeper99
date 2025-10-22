@@ -36,7 +36,7 @@ public class Server {
                     socket.receive(packet);
                     
                     // Obtain client ID from packet (address.hashCode() * port as a simple example)
-                    // If connection is from new IP, add to clients list
+                    // If connection is from a new IP, add to clients list
                     boolean knownClient = packet.getData()[MagicNumbers.CLIENT_TYPE_INDEX] != MagicNumbers.MSG_CONNECT;
 
                     if (!knownClient) {
@@ -93,7 +93,7 @@ public class Server {
         }
 
         // Second pass: copy to result array
-        byte[] serialized = new byte[totalSize];
+        byte[] serialized = new byte[totalSize + MagicNumbers.FULL_GAME_STATE_HEADER_SIZE];
         
         // Set header values
         serialized[MagicNumbers.SERVER_MESSAGE_TYPE_INDEX] = MagicNumbers.FULL_GAME_STATE_INDICATOR;
@@ -156,6 +156,6 @@ public class Server {
         sendMessage(gameState, client);
 
         // Echo message back to client for testing
-        sendMessage(gameState, client);
+        sendMessage(packet.getData(), client);
     }
 }

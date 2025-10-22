@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 
-import Minesweeper.PlayerBoard;
 import Utils.MagicNumbers;
 import Utils.Util;
 

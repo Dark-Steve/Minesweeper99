@@ -1,4 +1,4 @@
-package Minesweeper;
+package Server;
 
 public class Game {
     private ServerBoard board;

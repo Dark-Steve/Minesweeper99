@@ -1,5 +1,6 @@
-package Minesweeper;
+package Client;
 
+import Minesweeper.Board;
 import Utils.MagicNumbers;
 
 public class PlayerBoard extends Board {

@@ -2,8 +2,6 @@ package Server;
 
 import java.net.InetAddress;
 
-import Minesweeper.Game;
-
 public class ServerClient {
     public InetAddress address;
     public int port;

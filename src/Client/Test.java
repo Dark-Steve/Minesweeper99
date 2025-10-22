@@ -1,6 +1,5 @@
 package Client;
 
-import Minesweeper.PlayerBoard;
 import Utils.MagicNumbers;
 import Utils.Util;
 

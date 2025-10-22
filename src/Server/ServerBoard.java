@@ -1,7 +1,9 @@
-package Minesweeper;
+package Server;
 
 import java.util.Random;
 
+import Minesweeper.Board;
+import Minesweeper.Tile;
 import Utils.MagicNumbers;
 import Utils.Util;
 

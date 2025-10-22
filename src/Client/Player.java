@@ -85,8 +85,9 @@ public class Player extends Client {
             int height = data[index + MagicNumbers.HEIGHT_INDEX];
             int bombCount = data[index + MagicNumbers.BOMB_COUNT_INDEX];
             // Read client ID
-            byte[] clientIdBytes = new byte[8];
-            System.arraycopy(data, index + MagicNumbers.CLIENT_ID_INDEX, clientIdBytes, 0, 8);
+            byte[] clientIdBytes = new byte[MagicNumbers.CLIENT_ID_BYTE_ARRAY_SIZE];
+            System.arraycopy(data, index + MagicNumbers.CLIENT_ID_INDEX, clientIdBytes, 0, MagicNumbers.CLIENT_ID_BYTE_ARRAY_SIZE
+            );
             long clientId = Util.bytesToLong(clientIdBytes);
             // Calculate board size
             int boardSize = (width * height) + MagicNumbers.BOARD_HEADER_SIZE;
@@ -189,9 +190,7 @@ public class Player extends Client {
     public void connect() throws Exception {
         super.connect();
         startReceiver();
-        byte[] msg = new byte[9];
-        msg[MagicNumbers.CLIENT_TYPE_INDEX] = MagicNumbers.MSG_CONNECT;
-        System.arraycopy(Util.longToBytes(clientId), 0, msg, 1, 8);
+        byte[] msg = {MagicNumbers.MSG_CONNECT};
         sendMessage(msg);
     }
 

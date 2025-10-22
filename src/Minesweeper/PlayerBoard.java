@@ -8,7 +8,7 @@ public class PlayerBoard extends Board {
     public PlayerBoard(byte[] data) {
         super(data[MagicNumbers.WIDTH_INDEX], data[MagicNumbers.HEIGHT_INDEX], data[MagicNumbers.BOMB_COUNT_INDEX]);
         cells = new byte[width][height];
-        for (int i = MagicNumbers.BOARD_HEADER_SIZE; i < width * height; i++) {
+        for (int i = MagicNumbers.BOARD_HEADER_SIZE; i < (width * height) + MagicNumbers.BOARD_HEADER_SIZE; i++) {
             int index = i - MagicNumbers.BOARD_HEADER_SIZE;
             int x = index / height;
             int y = index % height;
@@ -28,7 +28,7 @@ public class PlayerBoard extends Board {
 
     public void update(byte[] data) {
         // Check if data is valid
-        if (data[MagicNumbers.BOARD_INDICATOR_INDEX] != MagicNumbers.BOARD_INDICATOR) {
+        if (data[MagicNumbers.SERVER_MESSAGE_TYPE_INDEX] != MagicNumbers.BOARD_INDICATOR) {
             throw new IllegalArgumentException("Invalid board data");
         }
         for (int i = MagicNumbers.BOARD_HEADER_SIZE; i < data.length; i++) {

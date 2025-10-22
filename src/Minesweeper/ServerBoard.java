@@ -46,7 +46,7 @@ public class ServerBoard extends Board {
 
     public byte[] toByteArray(long clientId) {
         byte[] data = new byte[(width * height) + MagicNumbers.BOARD_HEADER_SIZE];
-        data[MagicNumbers.BOARD_INDICATOR_INDEX] = MagicNumbers.BOARD_INDICATOR;
+        data[MagicNumbers.SERVER_MESSAGE_TYPE_INDEX] = MagicNumbers.BOARD_INDICATOR;
         data[MagicNumbers.WIDTH_INDEX] = (byte) width;
         data[MagicNumbers.HEIGHT_INDEX] = (byte) height;
         data[MagicNumbers.BOMB_COUNT_INDEX] = (byte) bombCount;

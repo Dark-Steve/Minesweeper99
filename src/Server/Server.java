@@ -109,7 +109,9 @@ public class Server {
     }
 
     public void processPacket(DatagramPacket packet) throws Exception {
-        long clientId = packet.getAddress().hashCode() * packet.getPort();
+        byte[] clientIdBytes = new byte[8];
+        System.arraycopy(packet.getData(), MagicNumbers.CLIENT_ID_INDEX, clientIdBytes, 0, 8);
+        long clientId = Util.bytesToLong(clientIdBytes);
         ServerClient client = clientMap.get(clientId);
 
         // Check if the client has a valid game
@@ -154,8 +156,5 @@ public class Server {
         byte[] gameState = serializeGameState();
         // Send updated board state back to the client
         sendMessage(gameState, client);
-
-        // Echo message back to client for testing
-        sendMessage(packet.getData(), client);
     }
 }

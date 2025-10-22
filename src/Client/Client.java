@@ -6,6 +6,9 @@ import java.net.InetAddress;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import Utils.MagicNumbers;
+import Utils.Util;
+
 // Base class for client connecting to the server
 public class Client  {
     public long clientId;
@@ -30,7 +33,10 @@ public class Client  {
             throw new IllegalStateException("Client is not connected to the server.");
         }   
         // Sending logic here
-        socket.send(new DatagramPacket(message, message.length, serverAddress, serverPort));
+        byte[] messageWithId = new byte[message.length + MagicNumbers.CLIENT_ID_BYTE_ARRAY_SIZE];
+        System.arraycopy(Util.longToBytes(clientId), 0, messageWithId, 0, MagicNumbers.CLIENT_ID_BYTE_ARRAY_SIZE);
+        System.arraycopy(message, 0, messageWithId, MagicNumbers.CLIENT_ID_BYTE_ARRAY_SIZE, message.length);
+        socket.send(new DatagramPacket(messageWithId, messageWithId.length, serverAddress, serverPort));
     }
 
     // Method to receive and store incoming messages

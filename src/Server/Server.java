@@ -24,13 +24,13 @@ public class Server {
     private ConcurrentHashMap<Long, ServerClient> clientMap = new ConcurrentHashMap<>();
 
     public Server() throws SocketException {
-        socket = new DatagramSocket(12345);
+        socket = new DatagramSocket(MagicNumbers.DEFAULT_SERVER_PORT);
 
         // Initialize receiver thread
         Thread receiver = new Thread(() -> {
             while (true) {
                 try {
-                    byte[] buffer = new byte[1024];
+                    byte[] buffer = new byte[MagicNumbers.MAX_MESSAGE_SIZE];
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                     socket.receive(packet);
                     

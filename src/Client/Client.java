@@ -45,7 +45,7 @@ public class Client  {
             throw new IllegalStateException("Client is not connected to the server.");
         }
         // Receiving logic here
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[MagicNumbers.MAX_MESSAGE_SIZE];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
         System.out.println("Received: " + new String(packet.getData(), 0, packet.getLength()));

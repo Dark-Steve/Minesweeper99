@@ -10,12 +10,12 @@ import Utils.Util;
 
 // Player class extending Client with player-specific functionality
 public class Player extends Client {
-    private Thread receiver;
-    private Scanner scanner;
+    protected Thread receiver;
+    protected Scanner scanner;
 
-    private PlayerBoard board;
+    protected PlayerBoard board;
 
-    private HashMap<Long, PlayerBoard> otherBoards;
+    protected HashMap<Long, PlayerBoard> otherBoards;
 
     public Player(String serverAddress, int serverPort, int id) throws Exception {
         super(serverAddress, serverPort, id);
@@ -103,13 +103,17 @@ public class Player extends Client {
             } else { // Otherwise, update or add the other player's board
                 System.out.println("Received board for client ID: " + clientId + " (not current player)");
                 // Store the other player's board
-                PlayerBoard otherBoard = new PlayerBoard(boardData);
+                PlayerBoard otherBoard = createNewBoard(boardData);
                 otherBoards.put(clientId, otherBoard);
             }
             // Move to the next board in the data
             processedGames++;
             index += boardSize;
         }
+    }
+
+    PlayerBoard createNewBoard(byte[] data) {
+        return new PlayerBoard(data);
     }
 
     private void handleMessage(byte[] message) {
@@ -165,7 +169,7 @@ public class Player extends Client {
             System.out.print("[*]"); // Bomb
         } else if (tile == MagicNumbers.TILE_FLAG) {
             System.out.print("[F]"); // Flag
-        } else if (tile != MagicNumbers.TILE_EMPTY) {
+        } else if (tile != MagicNumbers.TILE_HIDDEN) {
             System.out.print("[" + (tile & MagicNumbers.TILE_NUMBER_MASK) + "]"); // Number
         } else {
             System.out.print("[ ]"); // Empty
@@ -195,6 +199,6 @@ public class Player extends Client {
 
     // Method to update the player's board state
     public void updateBoard(byte[] data) {
-        board = new PlayerBoard(data);
+        board = createNewBoard(data);
     }
 }

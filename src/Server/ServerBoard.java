@@ -80,6 +80,7 @@ public class ServerBoard extends Board {
     }
 
     public void revealCell(int x, int y) {
+        if (cells[x][y].isFlagged()) return;
         cells[x][y].reveal();
     }
 

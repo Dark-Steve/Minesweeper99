@@ -14,7 +14,7 @@ public class Minesweeper99 {
     public static void main(String[] args) throws Exception {
         Random random = new Random();
         int port = random.nextInt(10000, 60000);
-        Player player = new Player(MagicNumbers.DEFAULT_SERVER_ADDRESS, MagicNumbers.DEFAULT_SERVER_PORT, InetAddress.getLocalHost().hashCode() * port);
+        VisualPlayer player = new VisualPlayer(MagicNumbers.DEFAULT_SERVER_ADDRESS, MagicNumbers.DEFAULT_SERVER_PORT, InetAddress.getLocalHost().hashCode() * port);
         player.connect();
         player.run();
     }

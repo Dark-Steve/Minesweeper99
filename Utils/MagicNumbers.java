@@ -45,5 +45,5 @@ public class MagicNumbers {
     public static final int HEARTBEAT_INTERVAL_MS = 5000; // Interval for sending heartbeat messages
     public static final int MAX_MESSAGE_SIZE = 1024; // Maximum size of a network message in bytes
     public static final int DEFAULT_SERVER_PORT = 12345; // Default server port
-    public static final String DEFAULT_SERVER_ADDRESS = "10.0.0.16"; // Default server address
+    public static final String DEFAULT_SERVER_ADDRESS = "localhost"; // Default server address
 }

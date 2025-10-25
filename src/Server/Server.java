@@ -13,6 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import Minesweeper.Game;
 import Utils.MagicNumbers;
+import Utils.Util;
 
 // A simple UDP server for Minesweeper99
 public class Server {
@@ -35,11 +36,13 @@ public class Server {
                     socket.receive(packet);
                     
                     // Obtain client ID from packet (address.hashCode() * port as a simple example)
-                    long clientId = packet.getAddress().hashCode() * packet.getPort();
-                    // If connection is from a new IP, add to clients list
-                    boolean knownClient = clientMap.containsKey(clientId);
+                    // If connection is from new IP, add to clients list
+                    boolean knownClient = packet.getData()[MagicNumbers.CLIENT_TYPE_INDEX] != MagicNumbers.MSG_CONNECT;
 
                     if (!knownClient) {
+                        byte[] clientIdBytes = new byte[8];
+                        System.arraycopy(packet.getData(), MagicNumbers.CLIENT_ID_INDEX, clientIdBytes, 0, 8);
+                        long clientId = Util.bytesToLong(clientIdBytes);
                         ServerClient newClient = new ServerClient(packet.getAddress(), packet.getPort(), clientId);
                         clientMap.put(clientId, newClient);
                         System.out.println("New client connected: " + packet.getAddress() + ":" + packet.getPort());
@@ -94,6 +97,7 @@ public class Server {
         
         // Set header values
         serialized[MagicNumbers.SERVER_MESSAGE_TYPE_INDEX] = MagicNumbers.FULL_GAME_STATE_INDICATOR;
+        serialized[MagicNumbers.FULL_GAME_BOARD_COUNT_INDEX] = (byte) gameStates.size();
 
         int currentIndex = MagicNumbers.FULL_GAME_STATE_HEADER_SIZE; // Leave space for header
         for (byte[] state : gameStates) {
@@ -149,6 +153,9 @@ public class Server {
 
         byte[] gameState = serializeGameState();
         // Send updated board state back to the client
+        sendMessage(gameState, client);
+
+        // Echo message back to client for testing
         sendMessage(gameState, client);
     }
 }

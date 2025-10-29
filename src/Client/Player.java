@@ -138,7 +138,7 @@ public class Player extends Client {
     }
 
     public void run() throws Exception {
-        int interval = 16; // Approx. 60 UPS
+        int interval = 1000; // Targeting 1 updates per second
 
         while (true) {
             long startTime = System.currentTimeMillis();

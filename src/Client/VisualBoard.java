@@ -21,7 +21,7 @@ public class VisualBoard extends PlayerBoard {
 
     public VisualBoard(byte[] data, JButton[][] buttons) {
         super(data);
-        visualTiles = buttons;
+        visualTiles = new JButton[width][height];
     }
 
 
@@ -34,7 +34,7 @@ public class VisualBoard extends PlayerBoard {
             for (int y = 0; y < this.height; y++) {
                 byte tile = getTile(x, y);
                 // Render the tile visually based on its state
-                ImageIcon imageIcon = new ImageIcon(Util.getImage(tile, mainTileSize)); // load the image to a imageIcon
+                ImageIcon imageIcon = new ImageIcon(Util.getImage(tile)); // load the image to a imageIcon
                 Image image = imageIcon.getImage(); // transform it
                 Image newimg = image.getScaledInstance(mainTileSize, mainTileSize, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
                 imageIcon = new ImageIcon(newimg); // transform it back
@@ -73,7 +73,7 @@ public class VisualBoard extends PlayerBoard {
                 // Render the tile visually based on its state
                 int trueX = (x * backgroundTileSize) + (xOffset);
                 int trueY = (y * backgroundTileSize) + (yOffset);
-                VisualTile visualTile = new VisualTile(tile, trueX, trueY, backgroundTileSize, true);
+                VisualTile visualTile = new VisualTile(tile);
                 visualTile.render(trueX, trueY, (VisualPlayer) player, backgroundTileSize);
             }
         }

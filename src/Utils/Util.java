@@ -16,7 +16,7 @@ public class Util {
         return ByteBuffer.wrap(b).order(ByteOrder.BIG_ENDIAN).getLong();
     }
 
-    public static BufferedImage getImage(byte tileData, int tileSize) {
+    public static BufferedImage getImage(byte tileData) {
         if (tileData == MagicNumbers.TILE_BOMB) {
             return Util.getBombImage();
         } else if (tileData == MagicNumbers.TILE_FLAG) {

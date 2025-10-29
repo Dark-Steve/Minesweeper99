@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 
+import javax.swing.JButton;
+
 import Utils.MagicNumbers;
 import Utils.Util;
 
@@ -67,6 +69,10 @@ public class Player extends Client {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else {
+            // Send a heartbeat message if no input is detected
+            byte[] heartbeat = {MagicNumbers.MSG_HEARTBEAT};
+            sendMessage(heartbeat);
         }
     }
 

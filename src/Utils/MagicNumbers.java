@@ -1,6 +1,5 @@
 package Utils;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class MagicNumbers {
     public static final byte MSG_CONNECT = 0x00; // Message to connect to the server
     public static final byte MSG_REVEAL = 0x01; // Message to reveal a tile
     public static final byte MSG_FLAG = 0x02; // Message to flag a tile
-    public static final byte HEART_BEAT = 0x7F; // Heartbeat message
+    public static final byte MSG_HEARTBEAT = 0x7F; // Heartbeat message
 
     // Server message constants
     public static final byte FULL_GAME_STATE_INDICATOR = 0x7E; // Value indicating that the data is full game state

@@ -127,7 +127,7 @@ public class Server {
         byte[] data = packet.getData();
         // Get message type from header
         byte messageType = data[MagicNumbers.CLIENT_TYPE_INDEX];
-        if (messageType == MagicNumbers.HEART_BEAT) {
+        if (messageType == MagicNumbers.MSG_HEARTBEAT) {
             // TODO: implement client timeout timer
         } else if (messageType == MagicNumbers.MSG_REVEAL) {
             // Process reveal message

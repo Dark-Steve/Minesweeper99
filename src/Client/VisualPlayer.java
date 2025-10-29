@@ -1,19 +1,25 @@
 package Client;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
 import Utils.MagicNumbers;
 import Utils.Util;
 
 // Representation of a player with GUI capabilities
-public class VisualPlayer extends Player {
+public class VisualPlayer extends Player implements ActionListener{
     // protected Thread receiver;
     // protected Scanner scanner;
 
     // protected PlayerBoard board;
 
     // protected HashMap<Long, PlayerBoard> otherBoards;
+
+    JButton[][]visualTiles;
+
 
     private DrawingPanel drawingPanel;
     private JFrame frame;
@@ -24,7 +30,7 @@ public class VisualPlayer extends Player {
 
         @Override
         public void repaint() {
-
+            update(offscreenGraphics);
         }
 
         public void update(Graphics g) {
@@ -38,7 +44,8 @@ public class VisualPlayer extends Player {
         }
 
         public void clearOffScreen() {
-            if (offscreenImage == null) {
+            if (offscreenImage == null || getWidth() != offscreenImage.getWidth(null)
+                    || getHeight() != offscreenImage.getHeight(null)) {
                 offscreenImage = createImage(getWidth(), getHeight());
                 offscreenGraphics = offscreenImage.getGraphics();
             }
@@ -51,24 +58,14 @@ public class VisualPlayer extends Player {
             // Draw a tile onto the offscreen graphics at position (x, y)
             byte tileData = tile.getTileData();
 
-            if (tileData == MagicNumbers.TILE_BOMB) {
-                offscreenGraphics.drawImage(Util.getBombImage(), x, y, this); // Bomb
-            } else if (tileData == MagicNumbers.TILE_FLAG) {
-                offscreenGraphics.drawImage(Util.getFlagImage(), x, y, this); // Flag
-            } else if (tileData == MagicNumbers.TILE_QUESTION) {
-                offscreenGraphics.drawImage(Util.getQuestionImage(), x, y, this); // Question
-            } else if (tileData == MagicNumbers.TILE_DEPRESSED_QUESTION) {
-                offscreenGraphics.drawImage(Util.getDepressedQuestionImage(), x, y, this); // Depressed Question
-            } else if (tileData == MagicNumbers.TILE_EXPLODED_BOMB) {
-                offscreenGraphics.drawImage(Util.getExplodedBombImage(), x, y, this); // Exploded Bomb
-            } else if (tileData == MagicNumbers.TILE_WRONG_FLAG) {
-                offscreenGraphics.drawImage(Util.getWrongFlagImage(), x, y, this); // Wrong Flag
-            } else if (tileData != MagicNumbers.TILE_HIDDEN) {
-                offscreenGraphics.drawImage(Util.getNumberImage(tileData & MagicNumbers.TILE_NUMBER_MASK), x, y, this); // Number
-            } else {
-                offscreenGraphics.drawImage(Util.getHiddenImage(), x, y, this); // Hidden
-            }
+            
         }
+    }
+
+    public void add(JButton button) {
+        drawingPanel.add(button);
+        button.addActionListener(this);
+        button.repaint();
     }
 
     public VisualPlayer(String serverAddress, int serverPort, int id) throws Exception {
@@ -84,6 +81,8 @@ public class VisualPlayer extends Player {
 
     public void drawTile(VisualTile tile, int x, int y, int tileSize) {
         drawingPanel.paintTileOffScreen(tile, x, y, tileSize);
+        frame.add(tile);
+        tile.addActionListener(this);
     }
 
     public Dimension getSize() {
@@ -93,6 +92,9 @@ public class VisualPlayer extends Player {
     @Override
     PlayerBoard createNewBoard(byte[] data) {
         // TODO Auto-generated method stub
+        if (visualTiles != null) {
+            return new VisualBoard(data, visualTiles);
+        }
         return new VisualBoard(data);
     }
 
@@ -101,8 +103,8 @@ public class VisualPlayer extends Player {
         drawingPanel.clearOffScreen();
 
         VisualBoard visualBoard = (VisualBoard) board;
-        visualBoard.displayMainBoard(this);
-
+        visualBoard.updateMainBoard(this);
+        visualTiles = visualBoard.visualTiles;
         int boardNumber = 0;
         for (PlayerBoard otherBoard : otherBoards.values()) {
             VisualBoard vb = (VisualBoard) otherBoard;
@@ -117,5 +119,11 @@ public class VisualPlayer extends Player {
     public void displayBoard() {
         // TODO Auto-generated method stub
         displayGame();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
     }
 }

@@ -16,6 +16,26 @@ public class Util {
         return ByteBuffer.wrap(b).order(ByteOrder.BIG_ENDIAN).getLong();
     }
 
+    public static BufferedImage getImage(byte tileData, int tileSize) {
+        if (tileData == MagicNumbers.TILE_BOMB) {
+            return Util.getBombImage();
+        } else if (tileData == MagicNumbers.TILE_FLAG) {
+            return Util.getFlagImage();
+        } else if (tileData == MagicNumbers.TILE_QUESTION) {
+            return Util.getQuestionImage();
+        } else if (tileData == MagicNumbers.TILE_DEPRESSED_QUESTION) {
+            return Util.getDepressedQuestionImage();
+        } else if (tileData == MagicNumbers.TILE_EXPLODED_BOMB) {
+            return Util.getExplodedBombImage();
+        } else if (tileData == MagicNumbers.TILE_WRONG_FLAG) {
+            return Util.getWrongFlagImage();
+        } else if (tileData != MagicNumbers.TILE_HIDDEN) {
+            return Util.getNumberImage(tileData & MagicNumbers.TILE_NUMBER_MASK);
+        } else {
+            return Util.getHiddenImage();
+        }
+    }
+
     public static BufferedImage getHiddenImage() {
         return MagicNumbers.SPRITE_SHEET.getSubimage(0, 51, 16, 16);
     }

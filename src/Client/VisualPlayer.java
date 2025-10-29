@@ -53,19 +53,15 @@ public class VisualPlayer extends Player implements ActionListener{
             offscreenGraphics.fillRect(0, 0, getWidth(), getHeight());
         }
 
-        public void paintTileOffScreen(VisualTile tile, int x, int y, int tileSize) {
-
-            // Draw a tile onto the offscreen graphics at position (x, y)
-            byte tileData = tile.getTileData();
-
-            
+        public Graphics getOffScreenGraphics() {
+            return offscreenGraphics;
         }
     }
 
     public void add(JButton button) {
         drawingPanel.add(button);
         button.addActionListener(this);
-        button.repaint();
+        button.printAll(drawingPanel.getOffScreenGraphics());
     }
 
     public VisualPlayer(String serverAddress, int serverPort, int id) throws Exception {
@@ -80,8 +76,8 @@ public class VisualPlayer extends Player implements ActionListener{
     }
 
     public void drawTile(VisualTile tile, int x, int y, int tileSize) {
-        drawingPanel.paintTileOffScreen(tile, x, y, tileSize);
-        frame.add(tile);
+        //drawingPanel.paintTileOffScreen(tile, x, y, tileSize);
+        drawingPanel.add(tile);
         tile.addActionListener(this);
     }
 
